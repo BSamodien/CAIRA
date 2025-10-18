@@ -1,3 +1,7 @@
+# ---------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. Licensed under the MIT license.
+# ---------------------------------------------------------------------
+
 ############################################################
 # Ephemeral Agent Subnet Setup for Integration Tests
 #
@@ -35,16 +39,16 @@ data "azurerm_virtual_network" "this" {
 locals {
   # Hash the run ID to get consistent but unique value
   run_id_hash = substr(sha256(var.test_run_id), 0, 8)
-  
+
   # Convert hash to number and mod by 254 to get octet (2-255)
   # Octet 0 reserved for connections subnet
   # Octet 1 reserved for future use
   # Octets 2-255 available for agent subnets (254 slots)
   octet_value = (parseint(local.run_id_hash, 16) % 254) + 2
-  
+
   # Generate CIDR: 172.16.X.0/24 where X is 2-255
   agent_cidr = "172.16.${local.octet_value}.0/24"
-  
+
   # Subnet name includes run ID for traceability
   agent_name = "agent-${var.test_run_id}"
 }
@@ -55,7 +59,7 @@ resource "azurerm_subnet" "agent" {
   resource_group_name  = data.azurerm_virtual_network.this.resource_group_name
   virtual_network_name = data.azurerm_virtual_network.this.name
   address_prefixes     = [local.agent_cidr]
-  
+
   # Required to allow Private Endpoints in the subnet
   private_endpoint_network_policies = "Disabled"
 
@@ -76,6 +80,6 @@ resource "azurerm_subnet" "agent" {
 # require time to cleanup after environment deletion
 resource "time_sleep" "purge_ai_foundry_cooldown" {
   destroy_duration = var.subnet_destroy_time_sleep
-  
+
   depends_on = [azurerm_subnet.agent]
 }

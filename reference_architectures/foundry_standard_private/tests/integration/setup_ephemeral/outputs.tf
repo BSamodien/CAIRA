@@ -1,3 +1,7 @@
+# ---------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. Licensed under the MIT license.
+# ---------------------------------------------------------------------
+
 output "agent_subnet" {
   value       = azurerm_subnet.agent
   description = "The ephemeral agent subnet resource"
