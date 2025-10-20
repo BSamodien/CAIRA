@@ -13,11 +13,11 @@
 # creating ephemeral resources. This eliminates 8-12 minute setup overhead per test run.
 #
 # ENVIRONMENT VARIABLES REQUIRED (set via TF_VAR_ prefix):
-# - TF_VAR_fbp_resource_group_name  : Resource group containing durable FBP pool (e.g., rg-fbp-durable)
-# - TF_VAR_fbp_vnet_name            : VNet name in the FBP pool (e.g., vnet-fbp-durable)
-# - TF_VAR_fbp_cosmosdb_account_name: Cosmos DB account name (e.g., cosmos-fbp-durable)
-# - TF_VAR_fbp_storage_account_name : Storage account name (e.g., stfbpdurable)
-# - TF_VAR_fbp_search_service_name  : AI Search service name (e.g., srch-fbp-durable)
+# - TF_VAR_fbscprv_resource_group_name  : Resource group containing durable FBP pool (e.g., rg-fbscprv-durable)
+# - TF_VAR_fbscprv_vnet_name            : VNet name in the FBP pool (e.g., vnet-fbscprv-durable)
+# - TF_VAR_fbscprv_cosmosdb_account_name: Cosmos DB account name (e.g., cosmos-fbscprv-durable)
+# - TF_VAR_fbscprv_storage_account_name : Storage account name (e.g., stfbscprvdurable)
+# - TF_VAR_fbscprv_search_service_name  : AI Search service name (e.g., srch-fbscprv-durable)
 # =============================================================================
 
 provider "azurerm" {
