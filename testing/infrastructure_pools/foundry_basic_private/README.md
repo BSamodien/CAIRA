@@ -96,7 +96,7 @@ Tests reference this infrastructure using data sources in acceptance and integra
 ### Health Check
 
 ```bash
-cd modules/infrastructure_pools/foundry_basic_private
+cd testing/infrastructure_pools/foundry_basic_private
 terraform plan  # Should show no changes if healthy
 ```
 
