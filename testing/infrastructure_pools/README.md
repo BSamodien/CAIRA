@@ -153,7 +153,7 @@ Infrastructure pools use consistent naming:
 
 - Resource groups: `rg-{arch}-durable`
 - Virtual networks: `vnet-{arch}-durable`
-- Subnets: Descriptive names like `connections`, `agents`
+- Subnets: Descriptive names like `connections` (note: `agents` subnets are created ephemerally outside the pool)
 
 Where `{arch}` is an abbreviation:
 
