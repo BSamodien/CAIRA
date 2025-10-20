@@ -106,7 +106,6 @@ export TF_VAR_search_service_name="srch-fstdprv-durable"
 | Name                    | Description              |
 |-------------------------|--------------------------|
 | `connection`            | Connection subnet object |
-| `agent`                 | Agent subnet object      |
 | `resource_group_name`   | Resource group name      |
 | `resource_group_id`     | Resource group ID        |
 | `virtual_network_id`    | Virtual network ID       |
