@@ -80,7 +80,7 @@ jobs:
     if: |
       !inputs.skip_destroy &&
       (needs.check-infrastructure.outputs.fsp_exists == 'true' ||
-       needs.check-infrastructure.outputs.fbp_exists == 'true')
+        needs.check-infrastructure.outputs.fbp_exists == 'true')
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -147,7 +147,7 @@ jobs:
     if: |
       always() &&
       (needs.destroy-infrastructure.result == 'success' ||
-       needs.destroy-infrastructure.result == 'skipped')
+        needs.destroy-infrastructure.result == 'skipped')
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     outputs:
