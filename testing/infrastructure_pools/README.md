@@ -48,12 +48,12 @@ A GitHub Actions workflow (`.github/workflows/refresh_durable_infrastructure.yml
 ### Automatic Refresh
 
 - **Schedule**: Every Sunday at 3:00 AM UTC
-- **Purpose**: Ensures storage account names remain unique and infrastructure stays clean
+- **Purpose**: Ensures infrastructure remains clean and resources are periodically refreshed
 - **Process**:
   1. Destroys existing infrastructure pools
   1. Waits for complete resource deletion
-  1. Deploys fresh infrastructure with new unique names
-  1. Updates repository variables with new resource names
+  1. Deploys fresh infrastructure with the same static names
+  1. Updates repository variables if resource names change (currently, names are reused)
 
 ### Manual Refresh
 
