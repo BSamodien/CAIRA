@@ -57,7 +57,7 @@ run "data" {
   }
   variables {
     resource_group_name = var.fsp_resource_group_name
-    vnet_name          = var.fsp_vnet_name
+    vnet_name           = var.fsp_vnet_name
     # ... other durable resources
   }
 }
@@ -69,7 +69,7 @@ run "setup_ephemeral" {
     source = "./setup_ephemeral"
   }
   variables {
-    test_run_id         = var.test_run_id  # From CI/CD
+    test_run_id         = var.test_run_id # From CI/CD
     vnet_name           = var.fsp_vnet_name
     vnet_resource_group = var.fsp_resource_group_name
   }
@@ -79,7 +79,7 @@ run "setup_ephemeral" {
 run "testint_basic_deployment" {
   command = apply
   variables {
-    agents_subnet_id = run.setup_ephemeral.agent_subnet_id  # Ephemeral
+    agents_subnet_id  = run.setup_ephemeral.agent_subnet_id # Ephemeral
     foundry_subnet_id = run.data.connection.id              # Durable
     # ... other variables
   }
@@ -88,22 +88,22 @@ run "testint_basic_deployment" {
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|----------|
-| test_run_id | Unique test run identifier (numeric) | `string` | n/a | yes |
-| vnet_name | Name of durable VNet | `string` | n/a | yes |
-| vnet_resource_group | Resource group containing VNet | `string` | n/a | yes |
-| subnet_destroy_time_sleep | Cleanup wait time | `string` | `"5m"` | no |
+| Name                      | Description                          | Type     | Default | Required |
+|---------------------------|--------------------------------------|----------|---------|----------|
+| test_run_id               | Unique test run identifier (numeric) | `string` | n/a     | yes      |
+| vnet_name                 | Name of durable VNet                 | `string` | n/a     | yes      |
+| vnet_resource_group       | Resource group containing VNet       | `string` | n/a     | yes      |
+| subnet_destroy_time_sleep | Cleanup wait time                    | `string` | `"5m"`  | no       |
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| agent_subnet | Full subnet resource object |
+| Name            | Description                           |
+|-----------------|---------------------------------------|
+| agent_subnet    | Full subnet resource object           |
 | agent_subnet_id | Subnet ID (use in `agents_subnet_id`) |
-| allocated_cidr | CIDR allocated for this run |
-| subnet_name | Subnet name (includes run ID) |
-| octet_value | Third octet used (2-255) |
+| allocated_cidr  | CIDR allocated for this run           |
+| subnet_name     | Subnet name (includes run ID)         |
+| octet_value     | Third octet used (2-255)              |
 
 ## Collision Risk
 

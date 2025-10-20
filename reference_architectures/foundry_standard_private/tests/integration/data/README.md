@@ -26,19 +26,19 @@ All durable infrastructure from Pool 2:
 # tests/integration/test.tftest.hcl
 
 run "data" {
-  command = plan  # Fast data source lookups only
-  
+  command = plan # Fast data source lookups only
+
   module {
     source = "./data"
   }
-  
+
   variables {
-    resource_group_name       = var.fsp_resource_group_name
-    vnet_name                 = var.fsp_vnet_name
-    connection_subnet_name    = var.fsp_connection_subnet_name
-    cosmosdb_account_name     = var.fsp_cosmosdb_account_name
-    storage_account_name      = var.fsp_storage_account_name
-    search_service_name       = var.fsp_search_service_name
+    resource_group_name    = var.fsp_resource_group_name
+    vnet_name              = var.fsp_vnet_name
+    connection_subnet_name = var.fsp_connection_subnet_name
+    cosmosdb_account_name  = var.fsp_cosmosdb_account_name
+    storage_account_name   = var.fsp_storage_account_name
+    search_service_name    = var.fsp_search_service_name
   }
 }
 
@@ -47,17 +47,17 @@ run "data" {
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|----------|
-| resource_group_name | Resource group name | `string` | n/a | yes |
-| vnet_name | VNet name | `string` | n/a | yes |
-| connection_subnet_name | Connections subnet name | `string` | `"connections"` | no |
-| cognitive_dns_zone_name | Cognitive DNS zone | `string` | `"privatelink.cognitiveservices.azure.com"` | no |
-| ai_services_dns_zone_name | AI Services DNS zone | `string` | `"privatelink.openai.azure.com"` | no |
-| openai_dns_zone_name | OpenAI DNS zone | `string` | `"privatelink.azure.com"` | no |
-| cosmosdb_account_name | Cosmos DB account name | `string` | n/a | yes |
-| storage_account_name | Storage account name | `string` | n/a | yes |
-| search_service_name | AI Search service name | `string` | n/a | yes |
+| Name                      | Description             | Type     | Default                                     | Required |
+|---------------------------|-------------------------|----------|---------------------------------------------|----------|
+| resource_group_name       | Resource group name     | `string` | n/a                                         | yes      |
+| vnet_name                 | VNet name               | `string` | n/a                                         | yes      |
+| connection_subnet_name    | Connections subnet name | `string` | `"connections"`                             | no       |
+| cognitive_dns_zone_name   | Cognitive DNS zone      | `string` | `"privatelink.cognitiveservices.azure.com"` | no       |
+| ai_services_dns_zone_name | AI Services DNS zone    | `string` | `"privatelink.openai.azure.com"`            | no       |
+| openai_dns_zone_name      | OpenAI DNS zone         | `string` | `"privatelink.azure.com"`                   | no       |
+| cosmosdb_account_name     | Cosmos DB account name  | `string` | n/a                                         | yes      |
+| storage_account_name      | Storage account name    | `string` | n/a                                         | yes      |
+| search_service_name       | AI Search service name  | `string` | n/a                                         | yes      |
 
 ## Outputs
 
@@ -69,10 +69,3 @@ See `outputs.tf` for full list. Key outputs:
 - `storage_account_name`, `storage_primary_blob_endpoint`, `storage_resource_id`
 - `search_service_name`, `search_resource_id`
 - `private_dns_zones` - Map of DNS zone names
-
-## Performance
-
-**Data source lookups:** ~10-20 seconds (command = plan)  
-**vs. Resource creation:** ~8-12 minutes (command = apply)
-
-**Speed improvement:** 24-72x faster! 🚀

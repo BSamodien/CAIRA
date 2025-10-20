@@ -1,3 +1,4 @@
+# yamllint disable-line rule:line-length
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 ---
 name: Refresh Durable Infrastructure Pools
@@ -49,7 +50,9 @@ jobs:
       - name: 🔍 Check Foundry Standard Private Pool
         id: check_fsp
         run: |
-          if az group show --name "rg-fstdprv-durable" --query "name" -o tsv 2>/dev/null; then
+          GROUP_NAME="rg-fstdprv-durable"
+          if az group show --name "$GROUP_NAME" \
+              --query "name" -o tsv 2>/dev/null; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             echo "✅ Foundry Standard Private pool exists"
           else
@@ -60,7 +63,9 @@ jobs:
       - name: 🔍 Check Foundry Basic Private Pool
         id: check_fbp
         run: |
-          if az group show --name "rg-fbscprv-durable" --query "name" -o tsv 2>/dev/null; then
+          GROUP_NAME="rg-fbscprv-durable"
+          if az group show --name "$GROUP_NAME" \
+              --query "name" -o tsv 2>/dev/null; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             echo "✅ Foundry Basic Private pool exists"
           else
@@ -111,7 +116,8 @@ jobs:
           echo "⏳ Waiting for resource group deletions to complete..."
 
           # Wait for FSP deletion
-          if [ "${{ needs.check-infrastructure.outputs.fsp_exists }}" == "true" ]; then
+          FSP_EXISTS="${{ needs.check-infrastructure.outputs.fsp_exists }}"
+          if [ "$FSP_EXISTS" == "true" ]; then
             echo "Waiting for rg-fstdprv-durable deletion..."
             while az group show --name "rg-fstdprv-durable" &>/dev/null; do
               echo "  Still deleting..."
@@ -121,7 +127,8 @@ jobs:
           fi
 
           # Wait for FBP deletion
-          if [ "${{ needs.check-infrastructure.outputs.fbp_exists }}" == "true" ]; then
+          FBP_EXISTS="${{ needs.check-infrastructure.outputs.fbp_exists }}"
+          if [ "$FBP_EXISTS" == "true" ]; then
             echo "Waiting for rg-fbscprv-durable deletion..."
             while az group show --name "rg-fbscprv-durable" &>/dev/null; do
               echo "  Still deleting..."
@@ -137,11 +144,15 @@ jobs:
   deploy-infrastructure:
     name: Deploy Infrastructure
     needs: [check-infrastructure, destroy-infrastructure]
-    if: always() && (needs.destroy-infrastructure.result == 'success' || needs.destroy-infrastructure.result == 'skipped')
+    if: |
+      always() &&
+      (needs.destroy-infrastructure.result == 'success' ||
+       needs.destroy-infrastructure.result == 'skipped')
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     outputs:
-      fsp_storage_account_name: ${{ steps.get_fsp_outputs.outputs.storage_account_name }}
+      fsp_storage_account_name: >-
+        ${{ steps.get_fsp_outputs.outputs.storage_account_name }}
       fbp_vnet_name: ${{ steps.get_fbp_outputs.outputs.vnet_name }}
     env:
       ARM_USE_AZUREAD: true
@@ -161,7 +172,8 @@ jobs:
           subscription-id: ${{ vars.PERSISTENT_SUB_AZURE_SUBSCRIPTION_ID }}
 
       - name: 🚧 Setup Terraform
-        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        uses: >-
+          hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
           terraform_wrapper: false # Needed to capture outputs
 
@@ -181,14 +193,17 @@ jobs:
 
       - name: 📤 Get Foundry Basic Private Outputs
         id: get_fbp_outputs
-        working-directory: ./testing/infrastructure_pools/foundry_basic_private
+        working-directory: >-
+          ./testing/infrastructure_pools/foundry_basic_private
         run: |
-          VNET_NAME=$(terraform output -raw virtual_network_id | awk -F'/' '{print $9}')
+          VNET_ID=$(terraform output -raw virtual_network_id)
+          VNET_NAME=$(echo "$VNET_ID" | awk -F'/' '{print $9}')
           echo "vnet_name=${VNET_NAME}" >> "$GITHUB_OUTPUT"
           echo "📊 VNet Name: ${VNET_NAME}"
 
       - name: 🏗️ Deploy Foundry Standard Private Pool
-        working-directory: ./testing/infrastructure_pools/foundry_standard_private
+        working-directory: >-
+          ./testing/infrastructure_pools/foundry_standard_private
         run: |
           echo "🔧 Initializing Terraform..."
           terraform init -upgrade
@@ -203,11 +218,12 @@ jobs:
 
       - name: 📤 Get Foundry Standard Private Outputs
         id: get_fsp_outputs
-        working-directory: ./testing/infrastructure_pools/foundry_standard_private
+        working-directory: >-
+          ./testing/infrastructure_pools/foundry_standard_private
         run: |
-          STORAGE_ACCOUNT_NAME=$(terraform output -raw storage_account_name)
-          echo "storage_account_name=${STORAGE_ACCOUNT_NAME}" >> "$GITHUB_OUTPUT"
-          echo "📊 Storage Account Name: ${STORAGE_ACCOUNT_NAME}"
+          SA_NAME=$(terraform output -raw storage_account_name)
+          echo "storage_account_name=${SA_NAME}" >> "$GITHUB_OUTPUT"
+          echo "📊 Storage Account Name: ${SA_NAME}"
 
   # Update GitHub repository variable with new storage account name
   update-github-variables:
@@ -216,15 +232,24 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: 📝 Update TF_VAR_FSP_STORAGE_ACCOUNT_NAME
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        uses: >-
+          actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
         with:
           github-token: ${{ github.token }}
           script: |
-            const storageAccountName = '${{ needs.deploy-infrastructure.outputs.fsp_storage_account_name }}';
+            const deployOutputs = context.payload.needs ||
+              ${{ toJSON(needs) }};
+            const fspOutput = deployOutputs['deploy-infrastructure']
+              ?.outputs?.fsp_storage_account_name ||
+              # yamllint disable-line rule:line-length
+              '${{ needs.deploy-infrastructure.outputs.fsp_storage_account_name }}';
+            const storageAccountName = fspOutput;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            console.log(`📝 Updating variable TF_VAR_FSP_STORAGE_ACCOUNT_NAME to: ${storageAccountName}`);
+            const varName = 'TF_VAR_FSP_STORAGE_ACCOUNT_NAME';
+            console.log(`📝 Updating ${varName}`);
+            console.log(`Value: ${storageAccountName}`);
 
             // Check if variable exists
             let variableExists = false;
@@ -262,20 +287,26 @@ jobs:
 
       - name: 📋 Summary
         run: |
-          echo "## 🎉 Durable Infrastructure Refresh Complete" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📊 Deployed Resources" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Foundry Standard Private Pool:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Resource Group: \`rg-fstdprv-durable\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Storage Account: \`${{ needs.deploy-infrastructure.outputs.fsp_storage_account_name }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Location: \`${{ env.LOCATION }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Foundry Basic Private Pool:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Resource Group: \`rg-fbscprv-durable\`" >> $GITHUB_STEP_SUMMARY
-          echo "- VNet: \`${{ needs.deploy-infrastructure.outputs.fbp_vnet_name }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Location: \`${{ env.LOCATION }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ Actions Completed" >> $GITHUB_STEP_SUMMARY
-          echo "- GitHub variable \`TF_VAR_FSP_STORAGE_ACCOUNT_NAME\` updated" >> $GITHUB_STEP_SUMMARY
-          echo "- All infrastructure pools ready for testing" >> $GITHUB_STEP_SUMMARY
+          # yamllint disable-line rule:line-length
+          FSP_SA="${{ needs.deploy-infrastructure.outputs.fsp_storage_account_name }}"
+          FBP_VNET="${{ needs.deploy-infrastructure.outputs.fbp_vnet_name }}"
+          {
+            echo "## 🎉 Durable Infrastructure Refresh Complete"
+            echo ""
+            echo "### 📊 Deployed Resources"
+            echo ""
+            echo "**Foundry Standard Private Pool:**"
+            echo "- Resource Group: \`rg-fstdprv-durable\`"
+            echo "- Storage Account: \`${FSP_SA}\`"
+            echo "- Location: \`${{ env.LOCATION }}\`"
+            echo ""
+            echo "**Foundry Basic Private Pool:**"
+            echo "- Resource Group: \`rg-fbscprv-durable\`"
+            echo "- VNet: \`${FBP_VNET}\`"
+            echo "- Location: \`${{ env.LOCATION }}\`"
+            echo ""
+            echo "### ✅ Actions Completed"
+            VAR_NAME="TF_VAR_FSP_STORAGE_ACCOUNT_NAME"
+            echo "- GitHub variable \`${VAR_NAME}\` updated"
+            echo "- All infrastructure pools ready for testing"
+          } >> "$GITHUB_STEP_SUMMARY"
