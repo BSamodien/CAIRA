@@ -100,7 +100,6 @@ export TF_VAR_search_service_name="srch-fstdprv-durable"
 |-----------------------------|--------|-----------------|-------------------------------------|
 | `location`                  | string | `swedencentral` | Azure region for deployment         |
 | `base_name`                 | string | `fstdprv`       | Base name for resource naming       |
-| `subnet_destroy_time_sleep` | string | `20m`           | Wait time before subnet destruction |
 
 ## Outputs
 
