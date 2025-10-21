@@ -28,19 +28,17 @@ Agent subnets **cannot be reused** across Container App Environments due to excl
 
 **Algorithm:**
 
-1. Hash test run ID (e.g., GitHub Actions run ID: `12345678`)
-1. Take first 8 characters of SHA-256 hash
-1. Convert to integer and mod by 254
+1. Convert test run ID to number (e.g., GitHub Actions run ID: `12345678` or timestamp: `20250421143022`)
+1. Modulo by 254 to get slot number (0-253)
 1. Add 2 to get octet value (range: 2-255)
 1. Generate CIDR: `172.16.{octet}.0/24`
 
 **Example:**
 
-- Run ID: `12345678`
-- Hash: `57c84a9c...` → `0x57c84a9c` → `1472839324`
-- Octet: `(1472839324 % 254) + 2` → `42`
-- CIDR: `172.16.42.0/24`
-- Subnet name: `agent-12345678`
+- Run ID: `20250421143022` (timestamp from `formatdate("YYYYMMDDHHmmss", timestamp())`)
+- Calculation: `(20250421143022 % 254) + 2` → `168`
+- CIDR: `172.16.168.0/24`
+- Subnet name: `agent-20250421143022`
 
 ## Usage in Tests
 

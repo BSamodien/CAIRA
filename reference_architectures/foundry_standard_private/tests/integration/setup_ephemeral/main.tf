@@ -33,14 +33,11 @@ data "azurerm_virtual_network" "this" {
 
 # Generate unique CIDR based on test run ID
 locals {
-  # Hash the run ID to get consistent but unique value
-  run_id_hash = substr(sha256(var.test_run_id), 0, 8)
-
-  # Convert hash to number and mod by 254 to get octet (2-255)
+  # Convert run ID to number and mod by 254 to get octet (2-255)
   # Octet 0 reserved for connections subnet
   # Octet 1 reserved for future use
   # Octets 2-255 available for agent subnets (254 slots)
-  octet_value = (parseint(local.run_id_hash, 16) % 254) + 2
+  octet_value = (tonumber(var.test_run_id) % 254) + 2
 
   # Generate CIDR: 172.16.X.0/24 where X is 2-255
   agent_cidr = "172.16.${local.octet_value}.0/24"
