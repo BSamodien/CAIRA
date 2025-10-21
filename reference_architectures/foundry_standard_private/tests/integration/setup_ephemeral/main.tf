@@ -16,12 +16,8 @@
 ############################################################
 
 terraform {
-  required_version = ">= 1.9"
+  required_version = ">= 1.13, < 2.0"
   required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 4.15"
-    }
     time = {
       source  = "hashicorp/time"
       version = "~> 0.9"
