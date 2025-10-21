@@ -47,17 +47,17 @@ run "data" {
 
 ## Inputs
 
-| Name                      | Description             | Type     | Default                                     | Required |
-|---------------------------|-------------------------|----------|---------------------------------------------|----------|
-| resource_group_name       | Resource group name     | `string` | n/a                                         | yes      |
-| vnet_name                 | VNet name               | `string` | n/a                                         | yes      |
-| connection_subnet_name    | Connections subnet name | `string` | `"connections"`                             | no       |
-| cognitive_dns_zone_name   | Cognitive DNS zone      | `string` | `"privatelink.cognitiveservices.azure.com"` | no       |
-| ai_services_dns_zone_name | AI Services DNS zone    | `string` | `"privatelink.openai.azure.com"`            | no       |
-| openai_dns_zone_name      | OpenAI DNS zone         | `string` | `"privatelink.azure.com"`                   | no       |
-| cosmosdb_account_name     | Cosmos DB account name  | `string` | n/a                                         | yes      |
-| storage_account_name      | Storage account name    | `string` | n/a                                         | yes      |
-| search_service_name       | AI Search service name  | `string` | n/a                                         | yes      |
+| Name                              | Description             | Type     | Default                                         | Required |
+|-----------------------------------|-------------------------|----------|-------------------------------------------------|----------|
+| fsp_resource_group_name           | Resource group name     | `string` | n/a                                             | yes      |
+| fsp_vnet_name                     | VNet name               | `string` | n/a                                             | yes      |
+| connection_subnet_name            | Connections subnet name | `string` | `"connections"`                                 | no       |
+| cognitive_dns_zone_name           | Cognitive DNS zone      | `string` | `"privatelink.cognitiveservices.azure.com"`     | no       |
+| ai_services_dns_zone_name         | AI Services DNS zone    | `string` | `"privatelink.services.ai.azure.com"`           | no       |
+| openai_dns_zone_name              | OpenAI DNS zone         | `string` | `"privatelink.openai.azure.com"`                | no       |
+| fsp_cosmosdb_account_name         | Cosmos DB account name  | `string` | n/a                                             | yes      |
+| fsp_storage_account_name          | Storage account name    | `string` | n/a                                             | yes      |
+| fsp_search_service_name           | AI Search service name  | `string` | n/a                                             | yes      |
 
 ## Outputs
 

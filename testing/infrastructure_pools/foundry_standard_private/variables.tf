@@ -10,7 +10,7 @@ variable "location" {
 
 variable "base_name" {
   type        = string
-  description = "Semantic base name used for generating resource names with 'durable' suffix."
+  description = "Semantic base name used for static durable resource naming (no random suffix)."
   default     = "fstdprv"
 }
 
