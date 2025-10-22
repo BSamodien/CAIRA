@@ -96,10 +96,10 @@ export TF_VAR_search_service_name="srch-fstdprv-durable"
 
 ## Variables
 
-| Name                        | Type   | Default         | Description                         |
-|-----------------------------|--------|-----------------|-------------------------------------|
-| `location`                  | string | `swedencentral` | Azure region for deployment         |
-| `base_name`                 | string | `fstdprv`       | Base name for resource naming       |
+| Name        | Type   | Default         | Description                   |
+|-------------|--------|-----------------|-------------------------------|
+| `location`  | string | `swedencentral` | Azure region for deployment   |
+| `base_name` | string | `fstdprv`       | Base name for resource naming |
 
 ## Outputs
 
